@@ -202,6 +202,10 @@ export default function Home() {
             />)}
         </BoardSection>
       </div>
+      <div>
+        {JSON.stringify(riddle)}
+      </div>
       </>
   )
 }
+
