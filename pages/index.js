@@ -124,7 +124,7 @@ export default function Home() {
   function setValue({set_name, pair_idx, board_name, i, j}){
     setRiddle(riddle => {
       const new_riddle = deepCopy(riddle);
-      new_riddle[set_name][pair_idx][board_name][i][j] = color;
+      new_riddle[set_name][pair_idx][board_name][i][j] = parseInt(color);
       return new_riddle;
     })
   }
