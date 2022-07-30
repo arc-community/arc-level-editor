@@ -1,6 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
 
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+
+
+
 const EXAMPLE_BOARD = [
   [0, 0, 0],
   [0, 0, 0],
@@ -80,7 +84,7 @@ function BoardPair({input, output, setValue, setDimensions, deletePair}){
     <Board data={input} setValue={forInput(setValue)} setDimensions={forInput(setDimensions)}/>
     <Board data={output} setValue={forOutput(setValue)} setDimensions={forOutput(setDimensions)}/>
     <div>
-    <Button onClick={() => deletePair()}>Delete Pair</Button>
+      <Button onClick={() => deletePair()}>Delete Pair</Button>
     </div>
   </div>;
 }
@@ -120,6 +124,13 @@ function ColorSelector({color, setColor}){
 export default function Home() {
   const [riddle, setRiddle] = React.useState(EXAMPLE);
   const [color, setColor] = React.useState(0);
+  const [copiedToClipboard, setCopiedToClipboard] = React.useState(false);
+
+  const riddleString = JSON.stringify(riddle);
+
+  React.useEffect(() => {
+    setCopiedToClipboard(false);
+  }, [riddle]);
 
   function setValue({set_name, pair_idx, board_name, i, j}){
     setRiddle(riddle => {
@@ -202,8 +213,14 @@ export default function Home() {
             />)}
         </BoardSection>
       </div>
-      <div>
-        {JSON.stringify(riddle)}
+      <div className="my-auto w-full flex flex-col items-center">
+        <div className="p-4 m-4 border">{riddleString}</div>
+        <CopyToClipboard value={riddleString} onCopy={() => setCopiedToClipboard(true)}>
+          {!copiedToClipboard ? 
+            <button className="border-2 p-2 rounded mb-8">Copy to clipboard</button>
+            : <span>Copied!</span>
+        }
+        </CopyToClipboard>
       </div>
       </>
   )
