@@ -215,7 +215,7 @@ export default function Home() {
       </div>
       <div className="my-auto w-full flex flex-col items-center">
         <div className="p-4 m-4 border">{riddleString}</div>
-        <CopyToClipboard value={riddleString} onCopy={() => setCopiedToClipboard(true)}>
+        <CopyToClipboard text={riddleString} onCopy={() => setCopiedToClipboard(true)}>
           {!copiedToClipboard ? 
             <button className="border-2 p-2 rounded mb-8">Copy to clipboard</button>
             : <span>Copied!</span>
