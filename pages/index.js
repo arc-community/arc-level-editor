@@ -43,9 +43,20 @@ function BoardSection({children, title, bg_color="bg-white", addPair}){
   </div>;
 }
 
-function Board({data, setValue, setDimensions}){
+function get_dimensions(data){
   const num_rows = data.length;
   const num_cols = data[0].length;
+  return { num_rows, num_cols };
+}
+
+function Board({data, setValue, setDimensions}){
+  const {num_rows, num_cols} = get_dimensions(data);
+  function fillWithColor(){
+    [...Array(num_rows).keys()].forEach(i => 
+      [...Array(num_cols).keys()].forEach(j => setValue({i, j})
+      )
+    );
+  }
   return (<div>
     <div>
       Rows: <input min="1" max="30" type="number" value={num_rows} onChange={ev => setDimensions({rows: ev.target.value, cols: num_cols})}/>
@@ -62,6 +73,7 @@ function Board({data, setValue, setDimensions}){
         )}
       </div>)}
     </div>
+      <button className="border-2 rounded px-2 m-1" onClick={() => fillWithColor()}>fill</button>
   </div>);
 }
 
@@ -80,8 +92,13 @@ function BoardPair({input, output, setValue, setDimensions, deletePair}){
   function forOutput(func){
     return addParams(func, {board_name: "output"});
   }
+  function inputToOutput(){
+    setDimensions({...get_dimensions(input), board_name: "output"});
+    setValue({data: input, board_name: "output"});
+  }
   return <div className="flex flex-row items-center my-8">
     <Board data={input} setValue={forInput(setValue)} setDimensions={forInput(setDimensions)}/>
+    <button className="border-2 rounded py-2 px-4" onClick={() => inputToOutput()}>--&gt;</button>
     <Board data={output} setValue={forOutput(setValue)} setDimensions={forOutput(setDimensions)}/>
     <div>
       <Button onClick={() => deletePair()}>Delete Pair</Button>
@@ -132,10 +149,15 @@ export default function Home() {
     setCopiedToClipboard(false);
   }, [riddle]);
 
-  function setValue({set_name, pair_idx, board_name, i, j}){
+  function setValue({set_name, pair_idx, board_name, i, j, data}){
+    // provide either i & j, or data
     setRiddle(riddle => {
       const new_riddle = deepCopy(riddle);
-      new_riddle[set_name][pair_idx][board_name][i][j] = parseInt(color);
+      if(data){
+        new_riddle[set_name][pair_idx][board_name] = deepCopy(data);
+      }else{
+        new_riddle[set_name][pair_idx][board_name][i][j] = parseInt(color);
+      }
       return new_riddle;
     })
   }
