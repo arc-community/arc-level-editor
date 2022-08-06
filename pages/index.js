@@ -1,5 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
+import clsx from 'clsx';
 
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
@@ -77,8 +78,8 @@ function Board({data, setValue, setDimensions}){
   </div>);
 }
 
-function Button({children, ...args}){
-  return <button className="border rounded p-2 border-1" {...args}>{children}</button>;
+function Button({children, className="", ...args}){
+  return <button className={clsx("border rounded p-2 border-1", className)} {...args}>{children}</button>;
 }
 
 function addParams(func, params){
@@ -213,6 +214,11 @@ export default function Home() {
     return addParams(func, {pair_idx, set_name: 'test'});
   }
 
+  async function loadFromClibpard(){
+    const text = await navigator.clipboard.readText()
+    setRiddle(JSON.parse(text));
+  }
+
   return (
     <>
       <Head><title>ARC Level Editor</title></Head>
@@ -235,14 +241,15 @@ export default function Home() {
             />)}
         </BoardSection>
       </div>
-      <div className="my-auto w-full flex flex-col items-center">
+      <div className="my-auto w-full flex flex-col items-center mb-8">
         <div className="p-4 m-4 border">{riddleString}</div>
         <CopyToClipboard text={riddleString} onCopy={() => setCopiedToClipboard(true)}>
           {!copiedToClipboard ? 
-            <button className="border-2 p-2 rounded mb-8">Copy to clipboard</button>
+            <Button className="mb-4">Copy to clipboard</Button>
             : <span>Copied!</span>
         }
         </CopyToClipboard>
+        <Button onClick={() => loadFromClibpard()}>Load from Cliboard</Button>
       </div>
       </>
   )
